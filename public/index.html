@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karnavati University | Event Portal</title>
+    
+    <link rel="icon" href="./logo3.jpg" type="image/jpeg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <a href="/api/download-ticket/${ticketId}" class="view-ticket-btn">
+    View Official Ticket
+</a>
+    
+    <style>
+        /* =========================================
+           1. Core Variables & Animations
+           ========================================= */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Orbitron:wght@700&family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
+
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            min-height: 100vh; display: flex; flex-direction: column;
+            color: #333333; 
+            overflow-x: hidden;
+            background-size: 200% 200% !important;
+            animation: gradientBG 15s ease infinite !important;
+            position: relative;
+        }
+
+        /* Dynamic Light Cool & Golden Themes */
+        body.cultural {
+            background: linear-gradient(-45deg, #f1f5f9, #e2e8f0, #cbd5e1, #94a3b8);
+            --bg-glass: rgba(255, 255, 255, 0.65); 
+            --accent: #d4af37; /* Champagne Gold */
+            --font-heading: 'Playfair Display', serif;
+        }
+
+        body.esports {
+            background: linear-gradient(-45deg, #f0f9ff, #e0f2fe, #bae6fd, #7dd3fc);
+            --bg-glass: rgba(255, 255, 255, 0.65); 
+            --accent: #eab308; /* Cyber Gold */
+            --font-heading: 'Orbitron', sans-serif;
+        }
+
+        body.tech {
+            background: linear-gradient(-45deg, #f5f3ff, #ede9fe, #ddd6fe, #c4b5fd);
+            --bg-glass: rgba(255, 255, 255, 0.65); 
+            --accent: #f59e0b; /* Amber Gold */
+            --font-heading: 'JetBrains Mono', monospace;
+        }
+
+        /* =========================================
+           2. Dynamic Floating Background Elements
+           ========================================= */
+        .floating-bg {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1; pointer-events: none; overflow: hidden;
+        }
+        
+        .shape {
+            position: absolute; color: var(--accent); opacity: 0;
+            transition: opacity 1s ease-in-out, color 0.5s ease;
+            filter: drop-shadow(0 0 10px var(--accent));
+        }
+
+        body.cultural .cultural-shape, body.cultural .generic-shape { opacity: 0.4; }
+        body.esports .esports-shape, body.esports .generic-shape { opacity: 0.4; }
+        body.tech .tech-shape, body.tech .generic-shape { opacity: 0.4; }
+
+        .circle-shape { border: 8px solid var(--accent); border-radius: 50%; opacity: 0 !important; } 
+        .square-shape { border: 8px solid var(--accent); opacity: 0 !important; }
+
+        .s1 { top: 10%; left: 5%; font-size: 8rem; animation: float1 12s infinite alternate ease-in-out; }
+        .s2 { top: 75%; left: 85%; font-size: 9rem; animation: float2 15s infinite alternate ease-in-out; }
+        .s3 { top: 45%; left: 15%; font-size: 7rem; animation: float3 10s infinite alternate ease-in-out; }
+        .s4 { top: 15%; left: 80%; font-size: 8.5rem; animation: float2 14s infinite alternate ease-in-out; }
+        .s5 { top: 70%; left: 8%; font-size: 7rem; animation: float1 16s infinite alternate ease-in-out; }
+        .s6 { top: 40%; left: 82%; font-size: 7.5rem; animation: float3 11s infinite alternate ease-in-out; }
+        .s7 { top: 12%; left: 85%; font-size: 8rem; animation: float3 13s infinite alternate ease-in-out; }
+        .s8 { top: 65%; left: 10%; font-size: 8.5rem; animation: float1 15s infinite alternate ease-in-out; }
+        .s9 { top: 45%; left: 75%; font-size: 7.5rem; animation: float2 12s infinite alternate ease-in-out; }
+        .s10 { top: 25%; left: 45%; font-size: 5rem; animation: float1 9s infinite alternate ease-in-out; }
+        .s11 { top: 85%; left: 50%; font-size: 10rem; animation: float2 20s infinite alternate ease-in-out;}
+        .s12 { top: 60%; left: 60%; font-size: 4rem; animation: float3 10s infinite alternate ease-in-out; }
+
+        @keyframes float1 { 0% { transform: translateY(0px) rotate(0deg); } 100% { transform: translateY(-40px) rotate(15deg); } }
+        @keyframes float2 { 0% { transform: translateY(0px) rotate(0deg); } 100% { transform: translateY(40px) rotate(-20deg); } }
+        @keyframes float3 { 0% { transform: translateY(0px) translateX(0px) rotate(0deg); } 100% { transform: translateY(-25px) translateX(25px) rotate(10deg); } }
+
+        /* Light Premium Glassmorphism */
+        .glass-panel {
+            background: var(--bg-glass);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 12px 32px rgba(31, 38, 135, 0.05);
+            border-radius: 24px;
+            position: relative; z-index: 1;
+        }
+
+        /* =========================================
+           3. Layout & Navigation
+           ========================================= */
+        header.top-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1.2rem 5%; position: sticky; top: 0; z-index: 100;
+            background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .logo-container { display: flex; align-items: center; gap: 15px; cursor: pointer; }
+        .univ-logo { height: 45px; object-fit: contain; }
+
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a {
+            color: #555; text-decoration: none; font-weight: 600; font-size: 0.9rem;
+            text-transform: uppercase; letter-spacing: 1px; position: relative;
+        }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 2px;
+            background: var(--accent); transition: width 0.3s ease;
+        }
+        .nav-links a:hover, .nav-links a.active { color: #111; }
+        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+
+        .btn-outline {
+            padding: 0.7rem 1.8rem; border: 2px solid var(--accent); background: transparent;
+            color: var(--accent); border-radius: 50px; cursor: pointer; font-weight: 700;
+            text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;
+        }
+        .btn-outline:hover { background: var(--accent); color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transform: translateY(-2px); }
+        .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .btn-primary:hover { filter: brightness(1.1); }
+
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 4rem 1rem; width: 100%; position: relative; z-index: 1;}
+
+        .view-section { display: none; width: 100%; max-width: 1000px; opacity: 0; transform: translateY(20px); }
+        .view-section.active { display: flex; flex-direction: column; align-items: center; animation: slideUpFade 0.6s forwards; }
+        @keyframes slideUpFade { to { opacity: 1; transform: translateY(0); } }
+
+        /* =========================================
+           4. Home View (Forms & Selector)
+           ========================================= */
+        .hero { text-align: center; margin-bottom: 4rem; position: relative; z-index: 2; }
+        .hero h1 { font-family: var(--font-heading); font-size: 4.5rem; color: var(--accent); line-height: 1.1; margin-bottom: 1rem; text-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .hero p { font-size: 1.2rem; color: #555; font-weight: 400; }
+
+        .selector-container { display: flex; gap: 2rem; margin-bottom: 4rem; flex-wrap: wrap; justify-content: center; position: relative; z-index: 2;}
+        .card { padding: 2rem 3rem; border-radius: 20px; cursor: pointer; text-align: center; width: 220px; background: rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.8); }
+        .card:hover { transform: translateY(-10px); background: rgba(255, 255, 255, 0.9); }
+        .card.active { border-color: var(--accent); background: rgba(255, 255, 255, 1); box-shadow: 0 15px 35px rgba(0,0,0,0.08); }
+        .card i { font-size: 2.8rem; margin-bottom: 15px; color: #888; }
+        .card.active i { color: var(--accent); filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05)); }
+
+        .form-container { padding: 3.5rem; width: 100%; max-width: 800px; position: relative; z-index: 2;}
+        .form-logo { position: absolute; top: -40px; left: 50%; transform: translateX(-50%); width: 80px; height: 80px; object-fit: cover; border-radius: 50%; border: 2px solid var(--accent); box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: #fff;}
+        
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1rem; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group.full-width { grid-column: span 2; }
+        label { margin-bottom: 0.6rem; font-size: 0.85rem; color: #555; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;}
+        input, select, textarea { width: 100%; padding: 1rem 1.2rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255, 255, 255, 0.8); color: #111; font-size: 1rem; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); background: #fff; box-shadow: 0 0 0 4px rgba(0,0,0,0.05); }
+        option { background: #fff; color: #111; }
+
+        .conditional-field { max-height: 0; opacity: 0; overflow: hidden; }
+        .conditional-field.visible { max-height: 120px; opacity: 1; }
+
+        .btn-submit { grid-column: span 2; padding: 1.2rem; border: none; border-radius: 12px; background: var(--accent); color: #fff; font-weight: 700; font-size: 1.1rem; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; margin-top: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.1);}
+        .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); filter: brightness(1.05); }
+
+        /* =========================================
+           5. Hover-Reveal Timeline
+           ========================================= */
+        .timeline-hint { color: var(--accent); font-family: var(--font-heading); margin-bottom: 2rem; animation: pulse 2s infinite; letter-spacing: 1px; }
+        @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+
+        .timeline-container { width: 100%; max-width: 800px; margin: 0 auto; position: relative; padding-bottom: 2rem; z-index: 2;}
+        .timeline-container::before { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; transform: translateX(-50%); width: 2px; background: rgba(0,0,0,0.1); }
+        
+        .timeline-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; position: relative; min-height: 150px; }
+        .timeline-item:nth-child(even) { flex-direction: row-reverse; }
+        
+        .timeline-dot { width: 24px; height: 24px; background: #fff; border: 4px solid var(--accent); border-radius: 50%; position: absolute; left: 50%; transform: translateX(-50%); z-index: 2; transition: 0.4s; cursor: crosshair; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .timeline-content { width: 45%; padding: 2rem; border-radius: 20px; opacity: 0; filter: blur(10px); transform: scale(0.9); pointer-events: none; border: 1px solid transparent; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+        .timeline-item:hover .timeline-dot { transform: translateX(-50%) scale(1.5); background: var(--accent); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .timeline-item:hover .timeline-content { opacity: 1; filter: blur(0); transform: scale(1); background: rgba(255,255,255,0.9); border-color: var(--accent); box-shadow: 0 15px 30px rgba(0,0,0,0.05); }
+
+        .timeline-content h3 { font-family: var(--font-heading); color: var(--accent); font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .timeline-content p { color: #555; font-size: 0.9rem; line-height: 1.6; }
+        .time-tag { display: inline-block; padding: 0.3rem 0.8rem; background: var(--accent); border-radius: 50px; font-size: 0.8rem; margin-bottom: 1rem; color: #fff; font-weight: 600; }
+
+        /* =========================================
+           6. Rules & Contact Views
+           ========================================= */
+        .content-card { width: 100%; padding: 3rem; border-radius: 24px; margin-bottom: 2rem; z-index: 2; }
+        .content-card h2 { font-family: var(--font-heading); color: var(--accent); font-size: 2.5rem; margin-bottom: 2rem; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 1rem; }
+        
+        .rules-list { list-style: none; }
+        .rules-list li { padding: 1.5rem; background: rgba(255,255,255,0.7); margin-bottom: 1rem; border-radius: 12px; border-left: 4px solid var(--accent); display: flex; gap: 1rem; align-items: flex-start; box-shadow: 0 4px 10px rgba(0,0,0,0.02);}
+        .rules-list i { color: var(--accent); font-size: 1.5rem; margin-top: 5px; }
+
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+        .contact-info { display: flex; flex-direction: column; gap: 1.5rem; }
+        .info-box { padding: 2rem; background: rgba(255,255,255,0.7); border-radius: 16px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.02);}
+        .info-box i { font-size: 2.5rem; color: var(--accent); margin-bottom: 1rem; }
+        .info-box h3 { color: #111; }
+        .info-box p { color: #555; }
+
+        /* =========================================
+           7. Dashboards (Admin & Student)
+           ========================================= */
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; width: 100%; }
+        .dashboard-header h2 { font-family: var(--font-heading); font-size: 2.5rem; color: var(--accent); }
+        .dashboard-header span { color: #666; font-weight: 600;}
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; width: 100%; margin-bottom: 3rem; }
+        .stat-card { padding: 2rem; text-align: center; display: flex; flex-direction: column; gap: 1rem; border-radius: 20px; background: rgba(255,255,255,0.8); box-shadow: 0 4px 15px rgba(0,0,0,0.02);}
+        .stat-card i { font-size: 2.5rem; color: var(--accent); opacity: 0.9; }
+        .stat-card h3 { font-size: 0.9rem; color: #555; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+        .stat-card .number { font-family: var(--font-heading); font-size: 3.5rem; color: #111; line-height: 1; }
+
+        .admin-table-container { width: 100%; padding: 2rem; border-radius: 24px; background: rgba(255,255,255,0.7);}
+        .admin-table { width: 100%; border-collapse: collapse; text-align: left; }
+        .admin-table th { color: var(--accent); padding: 1rem; border-bottom: 2px solid rgba(0,0,0,0.05); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; }
+        .admin-table td { padding: 1.2rem 1rem; border-bottom: 1px solid rgba(0,0,0,0.05); color: #444; }
+
+        .empty-state { text-align: center; padding: 3rem; color: #888; font-style: italic; }
+
+        /* Student Ticket Styles */
+        .student-ticket { border-left: 6px solid var(--accent); text-align: left; align-items: flex-start; display: flex; flex-direction: column; justify-content: center;}
+        .ticket-header { display: flex; justify-content: space-between; width: 100%; align-items: center; border-bottom: 1px dashed rgba(0,0,0,0.1); padding-bottom: 10px; margin-bottom: 10px;}
+        .ticket-badge { background: var(--accent); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; letter-spacing: 1px; }
+
+        /* =========================================
+           8. Modals & Footer
+           ========================================= */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 999; opacity: 0; visibility: hidden; }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-content { width: 100%; max-width: 420px; padding: 3rem; transform: scale(0.9); background: rgba(255,255,255,0.95); box-shadow: 0 20px 50px rgba(0,0,0,0.15);}
+        .modal-overlay.active .modal-content { transform: scale(1); }
+        
+        .login-toggle { display: flex; background: rgba(0,0,0,0.05); border-radius: 50px; margin-bottom: 2rem; padding: 5px; border: 1px solid rgba(0,0,0,0.05); }
+        .toggle-btn { flex: 1; padding: 0.8rem; border-radius: 50px; background: transparent; border: none; color: #666; font-weight: 600; cursor: pointer; }
+        .toggle-btn.active { background: var(--accent); color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+        footer { padding: 2rem 5%; text-align: center; border-top: 1px solid rgba(255,255,255,0.6); background: rgba(255,255,255,0.5); backdrop-filter: blur(10px); z-index: 2; position: relative;}
+        .footer-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .socials a { color: #666; font-size: 1.2rem; margin: 0 10px; text-decoration: none; }
+        .socials a:hover { color: var(--accent); transform: scale(1.2); display: inline-block; }
+
+        @media (max-width: 768px) {
+            .form-grid, .contact-grid { grid-template-columns: 1fr; }
+            .form-group.full-width { grid-column: span 1; }
+            .btn-submit { grid-column: span 1; }
+            .nav-links { display: none; }
+            .hero h1 { font-size: 3rem; }
+            .timeline-container::before { left: 20px; }
+            .timeline-item, .timeline-item:nth-child(even) { flex-direction: column; align-items: flex-end; }
+            .timeline-dot { left: 20px; transform: translateX(-50%); }
+            .timeline-content { width: calc(100% - 60px); }
+        }
+    </style>
+</head>
+<script>
+    async function loadAdminData() {
+        const response = await fetch('/api/admin/registrations');
+        const students = await response.json();
+        
+        const tableBody = document.getElementById('adminTableBody'); // Make sure your table has this ID
+        tableBody.innerHTML = ''; // Clear the "Loading..." text
+
+        students.forEach(student => {
+            tableBody.innerHTML += `
+                <tr>
+                    <td>${student.name}</td>
+                    <td>${student.studentId}</td>
+                    <td>${student.event}</td>
+                    <td>${student.department}</td>
+                    <td><a href="/api/download-ticket/${student.ticketId}" target="_blank">View Pass</a></td>
+                </tr>
+            `;
+        });
+    }
+
+    // Run this function immediately when the page loads
+    loadAdminData();
+</script>
+<body class="cultural">
+
+    <div class="floating-bg">
+        <i class="fas fa-music shape cultural-shape s1"></i>
+        <i class="fas fa-palette shape cultural-shape s2"></i>
+        <i class="fas fa-masks-theater shape cultural-shape s3"></i>
+        <i class="fas fa-gamepad shape esports-shape s4"></i>
+        <i class="fas fa-headset shape esports-shape s5"></i>
+        <i class="fas fa-trophy shape esports-shape s6"></i>
+        <i class="fas fa-microchip shape tech-shape s7"></i>
+        <i class="fas fa-rocket shape tech-shape s8"></i>
+        <i class="fas fa-laptop-code shape tech-shape s9"></i>
+        <i class="fas fa-star shape generic-shape s10"></i>
+        <i class="fas fa-graduation-cap shape generic-shape s11"></i>
+        <i class="fas fa-star shape generic-shape s12"></i>
+    </div>
+
+    <header class="top-nav" id="main-header">
+        <div class="logo-container" onclick="switchView('home')">
+            <img src="./logo3.jpg" alt="KU Logo" class="univ-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <h3 style="display:none; font-family: 'Playfair Display', serif; letter-spacing: 2px; color: #111;">KARNAVATI</h3>
+        </div>
+        <nav class="nav-links" id="standard-nav">
+            <a href="#" class="nav-item active" onclick="switchView('home', this)">Register</a>
+            <a href="#" class="nav-item" onclick="switchView('schedule', this)">Timeline</a>
+            <a href="#" class="nav-item" onclick="switchView('rules', this)">Rules</a>
+            <a href="#" class="nav-item" onclick="switchView('contact', this)">Contact</a>
+        </nav>
+        <div id="auth-controls" style="display: flex; gap: 10px;">
+            <button class="btn-outline" id="btn-login" onclick="openLogin()">Portal Login</button>
+            <button class="btn-outline btn-primary" id="btn-student-dash" onclick="switchView('student')" style="display: none;">My Dashboard</button>
+            <button class="btn-outline" id="btn-logout" onclick="logoutUser()" style="display: none; border-color: #ef4444; color: #ef4444;">Sign Out</button>
+        </div>
+    </header>
+
+    <main>
+        <section id="view-home" class="view-section active">
+            <div class="hero">
+                <h1 id="hero-title">Cultural Carnival</h1>
+                <p>The Official Experience Portal | Karnavati University</p>
+            </div>
+
+            <div class="selector-container">
+                <div class="card glass-panel active" onclick="switchTheme('cultural')" id="btn-cultural">
+                    <i class="fas fa-masks-theater"></i><span>Cultural</span>
+                </div>
+                <div class="card glass-panel" onclick="switchTheme('esports')" id="btn-esports">
+                    <i class="fas fa-gamepad"></i><span>Esports</span>
+                </div>
+                <div class="card glass-panel" onclick="switchTheme('tech')" id="btn-tech">
+                    <i class="fas fa-microchip"></i><span>Technology</span>
+                </div>
+            </div>
+
+            <div class="form-container glass-panel" id="form-section">
+                <img src="./logo3.jpg" alt="Logo" class="form-logo" onerror="this.style.display='none'">
+                <h2 style="margin-bottom: 2rem; font-size: 1.8rem; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 1.5rem; color: #111;">Secure Your Pass</h2>
+                
+                <form id="reg-form" novalidate>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Full Name</label><input type="text" id="full_name" required placeholder="John Doe"></div>
+                        <div class="form-group"><label>KU Student ID (UID)</label><input type="text" id="uid" required placeholder="Ex: KU2023BTECH001"></div>
+                        <div class="form-group"><label>University Email</label><input type="email" id="email" required placeholder="student@ku.edu.in"></div>
+                        <div class="form-group"><label>Contact Number</label><input type="tel" id="phone" required pattern="[0-9]{10}" placeholder="10 Digit Number"></div>
+                        <div class="form-group">
+                            <label>Department</label>
+                            <select id="department" required>
+                                <option value="">Select Department</option>
+                                <option value="UID">UID (Design)</option>
+                                <option value="UIM">UIM (Management)</option>
+                                <option value="UIT">UIT (Technology)</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Select Event</label><select id="event_name" required></select></div>
+
+                        <div class="form-group full-width conditional-field" id="field-cultural"><label>Instagram Handle</label><input type="text" id="instagram" placeholder="@username"></div>
+                        <div class="form-group full-width conditional-field" id="field-esports"><label>Squad / Team Name</label><input type="text" id="team_name" placeholder="Team Alpha"></div>
+                        <div class="form-group full-width conditional-field" id="field-tech"><label>GitHub Profile URL</label><input type="url" id="github" placeholder="https://github.com/username"></div>
+
+                        <button type="submit" class="btn-submit">Confirm Registration</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="success-card" class="glass-panel" style="display: none; text-align: center; padding: 4rem 3rem; max-width: 500px;">
+                <i class="fas fa-check-circle" style="font-size: 5rem; color: var(--accent); margin-bottom: 1.5rem;"></i>
+                <h2 style="font-family: var(--font-heading); font-size: 2.5rem; margin-bottom: 1rem; color: #111;">You're In!</h2>
+                <p id="success-details" style="color: #555; line-height: 1.6; margin-bottom: 2rem;"></p>
+                <button onclick="resetForm()" class="btn-outline">Register Another</button>
+            </div>
+        </section>
+
+        <section id="view-schedule" class="view-section">
+            <h2 style="font-family: var(--font-heading); font-size: 3rem; color: var(--accent); margin-bottom: 1rem;">Classified Timeline</h2>
+            <p class="timeline-hint"><i class="fas fa-search"></i> Hover over the nodes below to reveal the events</p>
+            
+            <div class="timeline-container">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content glass-panel">
+                        <span class="time-tag">April 10 • 10:00 AM</span>
+                        <h3>HackKU 36-Hr Hackathon</h3>
+                        <p><i class="fas fa-map-marker-alt" style="color: var(--accent);"></i> UIT Block D Labs</p>
+                        <p style="margin-top: 10px;">The ultimate coding marathon begins. Bring your best ideas to solve real-world problems.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content glass-panel">
+                        <span class="time-tag">April 10 • 02:00 PM</span>
+                        <h3>Valorant 5v5 Championship</h3>
+                        <p><i class="fas fa-map-marker-alt" style="color: var(--accent);"></i> Cyber Lounge</p>
+                        <p style="margin-top: 10px;">Watch the top university squads battle it out in a high-stakes tactical shooter tournament.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content glass-panel">
+                        <span class="time-tag">April 11 • 05:00 PM</span>
+                        <h3>UID Fashion Showcase</h3>
+                        <p><i class="fas fa-map-marker-alt" style="color: var(--accent);"></i> Main Ground Stage</p>
+                        <p style="margin-top: 10px;">Experience avant-garde fashion designed and modeled entirely by UID students.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-rules" class="view-section">
+            <div class="content-card glass-panel">
+                <h2>Official Guidelines</h2>
+                <ul class="rules-list">
+                    <li><i class="fas fa-id-card"></i> <div><strong style="color:#111;">Mandatory ID:</strong> <span style="color:#555;">All participants must carry their physical Karnavati University ID card. Entry will be denied without it.</span></div></li>
+                    <li><i class="fas fa-clock"></i> <div><strong style="color:#111;">Punctuality:</strong> <span style="color:#555;">Report to your respective venue exactly 30 minutes prior to the scheduled start time. Latecomers face disqualification.</span></div></li>
+                    <li><i class="fas fa-laptop-code"></i> <div><strong style="color:#111;">BYOD Policy:</strong> <span style="color:#555;">For Tech & Hackathon events, participants must bring their own fully charged laptops and peripherals. Internet will be provided.</span></div></li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="view-contact" class="view-section">
+            <div class="content-card glass-panel">
+                <h2>Get Support</h2>
+                <div class="contact-grid">
+                    <div class="contact-info">
+                        <div class="info-box">
+                            <i class="fas fa-headset"></i>
+                            <h3 style="margin-bottom: 5px;">Helpdesk</h3>
+                            <p>support@ku.edu.in<br>+91 90339 05900</p>
+                        </div>
+                    </div>
+                    
+                    <form id="contact-form" onsubmit="event.preventDefault(); alert('Query submitted! We will email you shortly.'); this.reset();">
+                        <div class="form-group"><label>Your Name</label><input type="text" required></div>
+                        <div class="form-group"><label>Your Query</label><textarea rows="5" required></textarea></div>
+                        <button type="submit" class="btn-submit" style="width: 100%;">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-admin" class="view-section">
+            <div class="dashboard-header">
+                <div><span style="color: #666; text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; font-weight: 700;">Database Connection: LIVE</span><h2>Admin Console</h2></div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card glass-panel"><i class="fas fa-users"></i><h3>Total Registered</h3><span class="number" id="stat-registered">0</span></div>
+                <div class="stat-card glass-panel"><i class="fas fa-ticket-alt"></i><h3>Seats Remaining</h3><span class="number" id="stat-seats">1000</span></div>
+                <div class="stat-card glass-panel"><i class="fas fa-chart-line"></i><h3>Total Entries</h3><span class="number" id="stat-entries">0</span></div>
+            </div>
+
+            <div class="admin-table-container glass-panel">
+                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--accent);">Real-Time Event Logs</h3>
+                <div style="overflow-x: auto;">
+                    <table class="admin-table">
+                        <thead><tr><th>Time</th><th>Student Email</th><th>UID</th><th>Event Selected</th><th>Status</th></tr></thead>
+                        <tbody id="admin-table-body">
+                            <tr><td colspan="5" class="empty-state">Waiting for incoming registrations...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-student" class="view-section">
+            <div class="dashboard-header">
+                <div><span style="color: #666; text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; font-weight: 700;">My Event Passes</span><h2 id="student-welcome-msg">Welcome, Student</h2></div>
+            </div>
+
+            <div id="student-content-area" style="width: 100%;">
+                </div>
+        </section>
+    </main>
+
+    <div id="login-modal" class="modal-overlay">
+        <div class="modal-content glass-panel" id="login-box">
+            <h2 id="login-title" style="text-align: center; margin-bottom: 1.5rem; font-family: var(--font-heading); font-size: 2rem; color: var(--accent);">Portal Login</h2>
+            <div class="login-toggle">
+                <button id="tab-student" class="toggle-btn active" onclick="setLoginMode('student')">Student</button>
+                <button id="tab-admin" class="toggle-btn" onclick="setLoginMode('admin')">Admin</button>
+            </div>
+            <form id="login-form">
+                <div class="form-group" style="margin-bottom: 1.5rem;"><label id="label-user">Email ID</label><input type="email" id="login-user" required placeholder="user@ku.edu.in"></div>
+                <div class="form-group" style="margin-bottom: 2.5rem;"><label>Password</label><input type="password" required placeholder="••••••••"></div>
+                <button type="button" class="btn-submit" id="btn-login-submit" onclick="mockLoginSubmit()" style="width: 100%;">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <footer id="main-footer">
+        <div class="footer-content">
+            <div style="font-size: 0.85rem; color: #666; font-weight: 600;">&copy; 2026 Karnavati University.</div>
+            <div class="socials"><a href="#"><i class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-linkedin-in"></i></a><a href="#"><i class="fab fa-twitter"></i></a></div>
+        </div>
+    </footer>
+
+    <script>
+        // Clean Slate Database Object (NO MOCK DATA)
+        const db = {
+            maxCapacity: 1000,
+            registered: 0,
+            entries: 0,
+            recentUsers: [] // Structure: {time, name, email, uid, event}
+        };
+
+        const events = {
+            cultural: ['VIAJE - Main Stage Dance', 'Battle of Bands', 'Fashion Show', 'Nukkad Natak'],
+            esports: ['BGMI Campus Championship', 'FIFA 24 Challenge', 'Valorant 5v5', 'Futsal League'],
+            tech: ['HackKU 36-Hr Hackathon', 'Robo-Wars', 'Algorithmic Debugging', 'UI/UX Design Sprint']
+        };
+
+        const titles = { cultural: 'Cultural Carnival', esports: 'Cyber Arena', tech: 'Nexus Tech Fest' };
+        
+        let currentLoginMode = 'student';
+        let loggedInEmail = null;
+
+        // Init
+        window.onload = () => {
+            switchTheme('cultural');
+            switchView('home');
+            updateAdminDashboard(); 
+        };
+
+        // Navigation
+        function switchView(viewId, navElement = null) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.getElementById(`view-${viewId}`).classList.add('active');
+
+            if(navElement && document.querySelectorAll('.nav-item').length) {
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                navElement.classList.add('active');
+            }
+
+            // Special render for student dashboard
+            if(viewId === 'student' && loggedInEmail) {
+                renderStudentDashboard();
+            }
+        }
+
+        // Theme switching
+        function switchTheme(category) {
+            document.body.className = category;
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+            document.getElementById(`btn-${category}`).classList.add('active');
+            document.getElementById('hero-title').innerText = titles[category];
+
+            const select = document.getElementById('event_name');
+            select.innerHTML = '<option value="">Select Event Preference</option>';
+            events[category].forEach(ev => select.appendChild(new Option(ev, ev)));
+
+            document.querySelectorAll('.conditional-field').forEach(f => f.classList.remove('visible'));
+            document.getElementById(`field-${category}`).classList.add('visible');
+        }
+
+        // Registration Handling (Pushes data to empty State)
+        document.getElementById('reg-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let isValid = true;
+            
+            this.querySelectorAll('[required]').forEach(input => {
+                input.style.borderColor = 'rgba(0,0,0,0.1)'; 
+                if (!input.value.trim()) { input.style.borderColor = '#ef4444'; isValid = false; }
+            });
+
+            if (isValid) {
+                const name = document.getElementById('full_name').value;
+                const uid = document.getElementById('uid').value;
+                const email = document.getElementById('email').value.toLowerCase();
+                const event = document.getElementById('event_name').value;
+                
+                // Real-time Frontend DB Update
+                db.registered++;
+                db.entries += 1; 
+                
+                // Add timestamp
+                const now = new Date();
+                const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+                db.recentUsers.unshift({
+                    time: timeString,
+                    name: name,
+                    email: email,
+                    uid: uid,
+                    event: event
+                });
+
+                updateAdminDashboard();
+
+                // Show Success Screen
+                document.getElementById('form-section').style.display = 'none';
+                document.getElementById('success-card').style.display = 'block';
+                document.getElementById('success-details').innerHTML = `Welcome, <strong>${name}</strong>!<br>Your spot for <strong>${event}</strong> is confirmed in our database.`;
+            }
+        });
+
+        function resetForm() {
+            document.getElementById('reg-form').reset();
+            document.getElementById('success-card').style.display = 'none';
+            document.getElementById('form-section').style.display = 'block';
+        }
+
+        // Admin Dashboard Logic
+        function updateAdminDashboard() {
+            document.getElementById('stat-registered').innerText = db.registered;
+            document.getElementById('stat-seats').innerText = db.maxCapacity - db.registered;
+            document.getElementById('stat-entries').innerText = db.entries;
+
+            const tbody = document.getElementById('admin-table-body');
+            
+            if(db.recentUsers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Waiting for incoming registrations...</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = '';
+            db.recentUsers.forEach(user => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="color: #666; font-size: 0.85rem; font-weight: 600;">${user.time}</td>
+                        <td style="font-weight: 700; color: #111;">${user.email}</td>
+                        <td style="font-family: var(--font-heading); color: var(--accent); font-weight: 700;">${user.uid}</td>
+                        <td style="font-weight: 600;">${user.event}</td>
+                        <td><span style="background: rgba(16, 185, 129, 0.15); color: #059669; padding: 4px 10px; border-radius: 50px; font-size: 0.8rem; font-weight: 700;">Saved DB</span></td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Student Dashboard Logic
+        function renderStudentDashboard() {
+            const container = document.getElementById('student-content-area');
+            const myEvents = db.recentUsers.filter(u => u.email === loggedInEmail);
+
+            if (myEvents.length === 0) {
+                container.innerHTML = `
+                    <div class="content-card glass-panel" style="text-align: center; padding: 4rem;">
+                        <i class="fas fa-ticket-alt" style="font-size: 5rem; color: #aaa; margin-bottom: 1.5rem;"></i>
+                        <h3 style="font-family: var(--font-heading); color: #111; font-size: 2rem; margin-bottom: 1rem;">No Passes Found</h3>
+                        <p style="color: #555; margin-bottom: 2rem;">You haven't registered for any events yet using <strong>${loggedInEmail}</strong>.</p>
+                        <button class="btn-outline" onclick="switchView('home')">Browse Events</button>
+                    </div>
+                `;
+            } else {
+                let html = '<div class="stats-grid">';
+                myEvents.forEach(ev => {
+                    html += `
+                        <div class="stat-card glass-panel student-ticket">
+                            <div class="ticket-header">
+                                <span class="ticket-badge">CONFIRMED PASS</span>
+                                <i class="fas fa-qrcode" style="color: #666; font-size: 1.8rem;"></i>
+                            </div>
+                            <h3 style="color: #111; font-size: 1.4rem; font-family: var(--font-heading); margin-bottom: 10px;">${ev.event}</h3>
+                            <p style="color: #555; font-size: 0.9rem; margin-bottom: 5px;"><strong style="color:#111;">Name:</strong> ${ev.name}</p>
+                            <p style="color: #555; font-size: 0.9rem; margin-bottom: 5px;"><strong style="color:#111;">UID:</strong> ${ev.uid}</p>
+                            <p style="color: #888; font-size: 0.8rem; margin-top: 15px;">Registered: ${ev.time}</p>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                container.innerHTML = html;
+            }
+        }
+
+        // Modals & Authentication
+        function openLogin() { document.getElementById('login-modal').classList.add('active'); }
+        function closeLogin() { document.getElementById('login-modal').classList.remove('active'); document.getElementById('login-form').reset(); }
+
+        function setLoginMode(mode) {
+            currentLoginMode = mode;
+            const btnSubmit = document.getElementById('btn-login-submit');
+            document.getElementById('tab-student').classList.remove('active');
+            document.getElementById('tab-admin').classList.remove('active');
+            document.getElementById(`tab-${mode}`).classList.add('active');
+
+            if (mode === 'admin') {
+                document.getElementById('label-user').innerText = 'Admin Username';
+                document.getElementById('login-user').placeholder = 'admin@ku.edu.in';
+                btnSubmit.style.background = "#ef4444"; btnSubmit.innerText = "Access Secure Portal";
+            } else {
+                document.getElementById('label-user').innerText = 'Student Email';
+                document.getElementById('login-user').placeholder = 'student@ku.edu.in';
+                btnSubmit.style.background = "var(--accent)"; btnSubmit.innerText = "Sign In";
+            }
+        }
+
+        function mockLoginSubmit() {
+            const user = document.getElementById('login-user').value.toLowerCase();
+            if(!user) return;
+            const btn = document.getElementById('btn-login-submit');
+            const originalText = btn.innerText; const originalBg = btn.style.background;
+
+            btn.innerText = "Authenticating...";
+            setTimeout(() => {
+                btn.innerText = "Access Granted"; btn.style.background = "#10b981"; btn.style.color = "#fff";
+                setTimeout(() => {
+                    closeLogin();
+                    btn.innerText = originalText; btn.style.background = originalBg;
+                    
+                    document.getElementById('btn-login').style.display = 'none';
+                    document.getElementById('btn-logout').style.display = 'block';
+
+                    if(currentLoginMode === 'admin') {
+                        document.getElementById('standard-nav').style.display = 'none';
+                        document.body.className = 'tech';
+                        switchView('admin');
+                    } else { 
+                        loggedInEmail = user;
+                        document.getElementById('btn-student-dash').style.display = 'block';
+                        document.getElementById('student-welcome-msg').innerText = `Welcome, ${user.split('@')[0]}`;
+                        switchView('student'); 
+                    }
+                }, 800);
+            }, 1000);
+        }
+
+        function logoutUser() {
+            loggedInEmail = null;
+            
+            // Reset buttons & nav
+            document.getElementById('btn-login').style.display = 'block';
+            document.getElementById('btn-logout').style.display = 'none';
+            document.getElementById('btn-student-dash').style.display = 'none';
+            document.getElementById('standard-nav').style.display = 'flex';
+            
+            // Reset to home
+            switchTheme('cultural');
+            switchView('home');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelector('.nav-item').classList.add('active');
+        }
+
+        window.onclick = function(event) { if (event.target == document.getElementById('login-modal')) closeLogin(); }
+    </script>
+</body>
+</html>
