@@ -1,6 +1,9 @@
 HeliHive™: Event Registration & Digital Credentialing SystemHeliHive™ is a full-stack MERN application designed to replace traditional paper-based entry at Karnavati University with a secure, real-time digital pass ecosystem.
 
 The project features a dual-phase architecture: a fully functional Locally Hosted Model and a comprehensive Google Cloud Migration Strategy.🚀 Project OverviewThe Mission: To provide a secure, real-time digital credentialing ecosystem for campus events.
+<img width="1900" height="952" alt="image" src="https://github.com/user-attachments/assets/2734759f-6d9d-4f42-b8f3-2714a35ab97d" />
+<img width="1769" height="1032" alt="image" src="https://github.com/user-attachments/assets/765788ef-c4ba-4d75-89e1-07a78c758364" />
+
 
 The Scope: A full-stack application providing instant, personalized ID passes with dynamic QR code verification.The Innovation: Automated "image-stamping" logic that overlays student data onto event-specific backgrounds.🛠️
 
